@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>出國準備清單</title>
+<style>
+  :root{
+    --ink:#182A4D;
+    --ink-soft:#3C4E72;
+    --tag:#EDE3CC;
+    --tag-line:#C9B98F;
+    --stamp:#C4622D;
+    --stamp-soft:#E8A87C;
+    --paper:#FAF7EF;
+    --ok:#2F7A5C;
+    --shadow: 0 10px 30px rgba(24,42,77,0.12);
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(196,98,45,0.08), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(24,42,77,0.08), transparent 40%),
+      var(--paper);
+    color:var(--ink);
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+    padding:32px 16px 80px;
+    min-height:100vh;
+  }
+
+  .boarding-pass{
+    max-width:760px;
+    margin:0 auto 36px;
+    background:var(--ink);
+    color:var(--tag);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .bp-top{
+    padding:28px 32px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+
+  .bp-eyebrow{
+    font-size:11px;
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    color:var(--stamp-soft);
+    margin:0 0 6px;
+  }
+
+  .bp-title{
+    font-size:28px;
+    font-weight:700;
+    margin:0;
+    letter-spacing:0.02em;
+  }
+
+  .bp-sub{
+    font-size:13px;
+    color:#B9C3DA;
+    margin:6px 0 0;
+  }
+
+  .bp-progress-wrap{
+    text-align:right;
+    min-width:140px;
+  }
+
+  .bp-progress-num{
+    font-family:"Courier New",monospace;
+    font-size:32px;
+    font-weight:700;
+    letter-spacing:0.04em;
+  }
+
+  .bp-progress-label{
+    font-size:11px;
+    letter-spacing:0.15em;
+    text-transform:uppercase;
+    color:#B9C3DA;
+  }
+
+  .bp-barrier{
+    position:relative;
+    height:0;
+    border-top:2px dashed rgba(237,227,204,0.35);
+    margin:0 32px;
+  }
+  .bp-barrier::before, .bp-barrier::after{
+    content:"";
+    position:absolute;
+    top:-11px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:var(--paper);
+  }
+  .bp-barrier::before{ left:-32px; }
+  .bp-barrier::after{ right:-32px; }
+
+  .bp-bottom{
+    padding:18px 32px 26px;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#B9C3DA;
+    letter-spacing:0.06em;
+  }
+  .bp-bottom b{ color:var(--tag); font-family:"Courier New",monospace; letter-spacing:0.08em;}
+
+  .progress-track{
+    max-width:760px;
+    margin:0 auto 36px;
+    height:8px;
+    background:rgba(24,42,77,0.1);
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,var(--stamp),var(--ok));
+    transition:width .35s ease;
+  }
+
+  .board{
+    max-width:760px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  .tag{
+    background:var(--tag);
+    border:1px solid var(--tag-line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    position:relative;
+    padding:20px 22px 14px;
+  }
+
+  .tag::before{
+    content:"";
+    position:absolute;
+    left:-9px;
+    top:26px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:var(--paper);
+    border:1px solid var(--tag-line);
+  }
+
+  .tag-head{
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:6px;
+    padding-left:8px;
+  }
+
+  .tag-index{
+    font-family:"Courier New",monospace;
+    font-size:12px;
+    color:var(--stamp);
+    font-weight:700;
+    letter-spacing:0.1em;
+  }
+
+  .tag-name{
+    font-size:16px;
+    font-weight:700;
+    color:var(--ink);
+  }
+
+  .items{
+    list-style:none;
+    margin:0;
+    padding:6px 8px 4px;
+  }
+
+  .items li{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:9px 4px;
+    border-bottom:1px dashed rgba(24,42,77,0.14);
+    font-size:14.5px;
+    line-height:1.55;
+  }
+  .items li:last-child{ border-bottom:none; }
+
+  .items input[type="checkbox"]{
+    appearance:none;
+    -webkit-appearance:none;
+    width:20px;
+    height:20px;
+    min-width:20px;
+    margin-top:2px;
+    border-radius:5px;
+    border:2px solid var(--ink-soft);
+    background:var(--paper);
+    cursor:pointer;
+    position:relative;
+    transition:all .15s ease;
+  }
+  .items input[type="checkbox"]:checked{
+    background:var(--ok);
+    border-color:var(--ok);
+  }
+  .items input[type="checkbox"]:checked::after{
+    content:"";
+    position:absolute;
+    left:5px;
+    top:1px;
+    width:6px;
+    height:11px;
+    border:solid var(--paper);
+    border-width:0 2px 2px 0;
+    transform:rotate(40deg);
+  }
+
+  .items label{
+    cursor:pointer;
+    flex:1;
+  }
+  .items li.checked label{
+    color:#7C8AA6;
+    text-decoration:line-through;
+    text-decoration-color:rgba(124,138,166,0.6);
+  }
+
+  .notice{
+    background:linear-gradient(135deg, rgba(196,98,45,0.08), rgba(196,98,45,0.02));
+    border:1px solid rgba(196,98,45,0.35);
+    border-radius:14px;
+    padding:20px 22px;
+    box-shadow:var(--shadow);
+  }
+  .notice-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-weight:700;
+    color:var(--stamp);
+    font-size:14px;
+    letter-spacing:0.05em;
+    margin-bottom:10px;
+  }
+  .notice-stamp{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;height:24px;
+    border-radius:50%;
+    border:2px solid var(--stamp);
+    font-size:13px;
+  }
+  .notice ul{
+    margin:0;
+    padding-left:18px;
+    font-size:13.5px;
+    line-height:1.9;
+    color:var(--ink-soft);
+  }
+
+  .reset-row{
+    max-width:760px;
+    margin:28px auto 0;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .reset-btn{
+    background:none;
+    border:1px solid var(--ink-soft);
+    color:var(--ink-soft);
+    font-size:12px;
+    padding:8px 16px;
+    border-radius:99px;
+    cursor:pointer;
+    letter-spacing:0.05em;
+  }
+  .reset-btn:hover{
+    background:var(--ink-soft);
+    color:var(--paper);
+  }
+
+  @media (max-width:600px){
+    .bp-top{padding:22px 20px 16px;}
+    .bp-title{font-size:22px;}
+    .bp-barrier{margin:0 20px;}
+    .bp-bottom{padding:16px 20px 22px; flex-direction:column; gap:6px;}
+    .tag{padding:16px 16px 10px;}
+  }
+</style>
+</head>
+<body>
+
+  <div class="boarding-pass">
+    <div class="bp-top">
+      <div>
+        <p class="bp-eyebrow">Boarding &nbsp;·&nbsp; Departure Checklist</p>
+        <h1 class="bp-title">出國準備清單</h1>
+        <p class="bp-sub">出發前，一項一項打勾，安心登機</p>
+      </div>
+      <div class="bp-progress-wrap">
+        <div class="bp-progress-num" id="progressNum">0/0</div>
+        <div class="bp-progress-label">Checked</div>
+      </div>
+    </div>
+    <div class="bp-barrier"></div>
+    <div class="bp-bottom">
+      <span>PASSENGER <b>YOU</b></span>
+      <span>GATE <b>ALL</b></span>
+      <span>SEQ <b id="seqNum">000</b></span>
+    </div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="board" id="board">
+
+    <div class="tag">
+      <div class="tag-head"><span class="tag-index">01</span><span class="tag-name">證件與金錢</span></div>
+      <ul class="items">
+        <li><input type="checkbox" id="c1"><label for="c1">護照、簽證</label></li>
+        <li><input type="checkbox" id="c2"><label for="c2">信用卡(機場停車用)、現金、外幣</label></li>
+        <li><input type="checkbox" id="c3"><label for="c3">機票、火車票、交通卡</label></li>
+        <li><input type="checkbox" id="c4"><label for="c4">住宿單、門票、車票等票券</label></li>
+        <li><input type="checkbox" id="c5"><label for="c5">行程表、地圖、購物清單</label></li>
+      </ul>
+    </div>
+
+    <div class="tag">
+      <div class="tag-head"><span class="tag-index">02</span><span class="tag-name">電子與隨身用品</span></div>
+      <ul class="items">
+        <li><input type="checkbox" id="c6"><label for="c6">網路</label></li>
+        <li><input type="checkbox" id="c7"><label for="c7">手機(充飽電)、行動電源(需能上飛機的)</label></li>
+        <li><input type="checkbox" id="c8"><label for="c8">相機、電池、充電器</label></li>
+        <li><input type="checkbox" id="c9"><label for="c9">變壓器、轉接頭(依實際設備數量調整)</label></li>
+        <li><input type="checkbox" id="c10"><label for="c10">筆記本、筆</label></li>
+        <li><input type="checkbox" id="c11"><label for="c11">暗袋(視情況)</label></li>
+      </ul>
+    </div>
+
+    <div class="tag">
+      <div class="tag-head"><span class="tag-index">03</span><span class="tag-name">藥品與衛生</span></div>
+      <ul class="items">
+        <li><input type="checkbox" id="c12"><label for="c12">腸胃藥、OK繃、退燒藥、止痛藥、感冒藥</label></li>
+        <li><input type="checkbox" id="c13"><label for="c13">平常每天吃的藥、小剪刀(需託運)</label></li>
+        <li><input type="checkbox" id="c14"><label for="c14">盥洗用具(牙刷牙膏、洗面乳、洗髮精、護髮乳、沐浴乳、卸妝油)</label></li>
+        <li><input type="checkbox" id="c15"><label for="c15">手帕、衛生紙、濕紙巾</label></li>
+        <li><input type="checkbox" id="c16"><label for="c16">化妝品、保養品、刮鬍刀、防曬乳</label></li>
+      </ul>
+    </div>
+
+    <div class="tag">
+      <div class="tag-head"><span class="tag-index">04</span><span class="tag-name">衣物與配件</span></div>
+      <ul class="items">
+        <li><input type="checkbox" id="c17"><label for="c17">睡衣、睡褲</label></li>
+        <li><input type="checkbox" id="c18"><label for="c18">拖鞋(視情況)</label></li>
+        <li><input type="checkbox" id="c19"><label for="c19">換洗衣褲、襪子、內衣褲</label></li>
+        <li><input type="checkbox" id="c20"><label for="c20">薄外套(飛機上用，一定要帶)、小毯子</label></li>
+        <li><input type="checkbox" id="c21"><label for="c21">雨傘、雨衣、毛帽</label></li>
+        <li><input type="checkbox" id="c22"><label for="c22">圍巾(視情況)、口罩、手套(視情況)</label></li>
+        <li><input type="checkbox" id="c23"><label for="c23">隱形眼鏡、眼鏡、墨鏡</label></li>
+      </ul>
+    </div>
+
+    <div class="tag">
+      <div class="tag-head"><span class="tag-index">05</span><span class="tag-name">收納與出門前</span></div>
+      <ul class="items">
+        <li><input type="checkbox" id="c24"><label for="c24">塑膠袋(裝髒衣服)、夾鏈袋、垃圾袋(一天一個)</label></li>
+        <li><input type="checkbox" id="c25"><label for="c25">帳單繳清、瓦斯關閉、門窗鎖緊</label></li>
+      </ul>
+    </div>
+
+    <div class="notice">
+      <div class="notice-head"><span class="notice-stamp">!</span>行李注意事項</div>
+      <ul>
+        <li>液體類只限 100ml 以下，超過需託運</li>
+        <li>噴霧型罐子不能帶(高壓噴霧)，託運也不行</li>
+        <li>瑞士小刀要託運</li>
+        <li>折傘可以放隨身行李</li>
+        <li>有電池的東西，都要放隨身行李</li>
+        <li>危險物品勿帶(刀、棍、槍、打火機)</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="reset-row">
+    <button class="reset-btn" id="resetBtn">重置全部勾選</button>
+  </div>
+
+<script>
+  const STORAGE_KEY = "travel-checklist-state";
+  const checkboxes = Array.from(document.querySelectorAll('.items input[type="checkbox"]'));
+  const progressNum = document.getElementById('progressNum');
+  const progressFill = document.getElementById('progressFill');
+  const seqNum = document.getElementById('seqNum');
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+
+  function saveState(){
+    const state = {};
+    checkboxes.forEach(cb => state[cb.id] = cb.checked);
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+
+  function updateProgress(){
+    const total = checkboxes.length;
+    const checked = checkboxes.filter(cb => cb.checked).length;
+    progressNum.textContent = `${checked}/${total}`;
+    progressFill.style.width = total ? `${(checked/total)*100}%` : '0%';
+    seqNum.textContent = String(checked).padStart(3,'0');
+  }
+
+  function applyRowState(cb){
+    const li = cb.closest('li');
+    if(li) li.classList.toggle('checked', cb.checked);
+  }
+
+  const saved = loadState();
+  checkboxes.forEach(cb => {
+    if(saved[cb.id]) cb.checked = true;
+    applyRowState(cb);
+    cb.addEventListener('change', () => {
+      applyRowState(cb);
+      updateProgress();
+      saveState();
+    });
+  });
+  updateProgress();
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    checkboxes.forEach(cb => { cb.checked = false; applyRowState(cb); });
+    updateProgress();
+    saveState();
+  });
+</script>
+
+</body>
+</html>
